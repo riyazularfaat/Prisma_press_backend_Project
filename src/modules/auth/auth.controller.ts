@@ -6,14 +6,31 @@ import { authService } from "./auth.service";
 
 const userLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;
-    const logInUser = await authService.loginUserIntoDB(payload);
+    const { acessToken, refreshToken } =
+    await authService.loginUserIntoDB(payload);
+
+
+    res.cookie("accessToken", acessToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    });
 
     sentResponse(res, {
       success: true,
       statusCode: httpStatus.CREATED,
       message: "User is successfully registered!",
       data: {
-        logInUser,
+        acessToken,
+        refreshToken,
       },
     });
   },
