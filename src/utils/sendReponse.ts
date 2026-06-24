@@ -15,7 +15,7 @@ type TSendData<T> = {
   meta?: TMetaData;
 };
 
-export const sentResponse = <T>(res: Response, data: TSendData<T>) => {
+export const sendResponse = <T>(res: Response, data: TSendData<T>) => {
   res.status(data.statusCode).json({
     success: data.success,
     statusCode: data.statusCode,

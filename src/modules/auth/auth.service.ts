@@ -11,6 +11,11 @@ const loginUserIntoDB = async (payload: IUser) => {
     const user = await prisma.user.findUniqueOrThrow({
         where:{email}
     })
+  
+    if (user.activeStatus === "BLOCKED") {
+      throw new Error("Your account has been blocked! Contact with support.");
+    }
+
 
     const isPasswordMatched = await bcrypt.compare(password, user.password);
 
