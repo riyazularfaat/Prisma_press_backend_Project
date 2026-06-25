@@ -24,29 +24,35 @@ const createUser = catchAsync(
 
 const getMyProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    // const { accessToken } = req.cookies;
-
-    // const verifiedToken = jwtUtils.verifiedToken(
-    //   accessToken,
-    //   config.jwt_access_secret,
-    // );
-
-    // if (typeof verifiedToken === "string") {
-    //   throw new Error(verifiedToken);
-    // }
 
     const profile = await userService.getMyProfileFromDb(req.user?.id as string);
 
     sendResponse(res, {
       success: true,
-      statusCode: httpStatus.CREATED,
-      message: "User is successfully registered!",
+      statusCode: httpStatus.OK,
+      message: "User is successfully fetched!",
       data: { profile },
     });
   },
 );
 
+const updateMyProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.user?.id as string;
+  const payload = req.body;
+
+  const updatedUser = await userService.updateMyProfileInDb(userId, payload);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User is successfully updated!",
+    data: { updatedUser },
+  });
+
+})
+
 export const userController = {
   createUser,
   getMyProfile,
+  updateMyProfile,
 };
