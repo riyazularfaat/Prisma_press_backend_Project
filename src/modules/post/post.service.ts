@@ -1,3 +1,4 @@
+import { CommentStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { ICreatePostPayload, IUpdatePayload } from "./post.interface";
 
@@ -20,36 +21,73 @@ const getAllPosts = async () => {
 };
 
 const getPostById = async (postId: string) => {
-  const post = await prisma.post.findUniqueOrThrow({
-    where: {
-      id: postId,
-    },
-  });
+  // await prisma.post.update({
+  //   where: {
+  //     id: postId,
+  //   },
+  //   data: {
+  //     views: {
+  //       increment: 1,
+  //     },
+  //   },
+  // });
 
-  if (!post) {
-    throw new Error("Not Found!")
-  }
+  // const post = await prisma.post.findUniqueOrThrow({
+  //   where: {
+  //     id: postId,
+  //   },
+  //   include: {
+  //     author: {
+  //       omit: {
+  //         password: true,
+  //       },
+  //     },
+  //     comments: {
+  //       where: {
+  //         status: CommentStatus.APPROVED
+  //       },
+  //       orderBy: {
+  //         createdAt: "desc"
+  //       }
+  //     },
+  //   },
+  // });
 
-  const updatedPost = await prisma.post.update({
-    where: {
-      id: postId,
-    },
-    data: {
-      views: {
-        increment: 1,
+  const transactionResult = await prisma.$transaction(async (tx) => {
+    await tx.post.update({
+      where: {
+        id: postId,
       },
-    },
-    include: {
-      author: {
-        omit: {
-          password: true,
+      data: {
+        views: {
+          increment: 1,
         },
       },
-      comments: true,
-    },
-  });
+    });
 
-  return updatedPost;
+    const post = await tx.post.findUniqueOrThrow({
+      where: {
+        id: postId,
+      },
+      include: {
+        author: {
+          omit: {
+            password: true,
+          },
+        },
+        comments: {
+          where: {
+            status: CommentStatus.APPROVED,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+    });
+    return post;
+  })
+  return transactionResult;
 };
 
 const getMyPosts = async (authorId: string) => {
