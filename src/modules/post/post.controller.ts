@@ -68,10 +68,48 @@ const getPostById = catchAsync(
 );
 
 const updatePost = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {},
+  async (req: Request, res: Response, next: NextFunction) => {
+    const postId = req.params.postId;
+    const authorId = req.user?.id;
+    const isAdmin = req.user?.role === "ADMIN";
+
+    const payload = req.body;
+
+    if (!postId) {
+      throw new Error("PostId is Required!");
+    }
+
+    const result = await postService.updatePost(postId as string, payload,authorId as string, isAdmin)
+      
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Post Updated successfully.",
+      data: result
+    });
+  },
 );
 const deletePost = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {},
+  async (req: Request, res: Response, next: NextFunction) => {
+    const postId = req.params.postId;
+    const authorId = req.user?.id;
+    const isAdmin = req.user?.role === "ADMIN";
+
+    const payload = req.body;
+
+    if (!postId) {
+      throw new Error("PostId is Required!");
+    }
+
+    await postService.deletePost(postId as string,authorId as string, isAdmin)
+      
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Post Deleted successfully.",
+      data: null
+    });
+  },
 );
 
 
