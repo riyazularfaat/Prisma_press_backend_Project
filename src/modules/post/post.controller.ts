@@ -26,7 +26,7 @@ const getAllPosts = catchAsync(async (req: Request, res: Response, next: NextFun
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: "Post Retrieved successfully.",
+      message: "Posts Retrieved successfully.",
       data: result,
     });
 })
@@ -35,10 +35,36 @@ const postStats = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {},
 );
 const getMyPosts = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {},
+  async (req: Request, res: Response, next: NextFunction) => {
+    const authorId = req.user?.id;
+
+    const result = await postService.getMyPosts(authorId as string);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "My Posts are Retrieved successfully.",
+      data: result,
+    });
+  },
 );
-const getSinglePost = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {},
+const getPostById = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const postId = req.params.postId;
+
+    if (!postId) {
+      throw new Error("PostId is Required!");
+    }
+
+    const result = await postService.getPostById(postId as string);
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Post Retrieved successfully.",
+      data: result,
+    });
+  },
 );
 
 const updatePost = catchAsync(
@@ -54,7 +80,7 @@ export const postController = {
   getAllPosts,
   postStats,
   getMyPosts,
-  getSinglePost,
+  getPostById,
   createPost,
   updatePost,
   deletePost,
