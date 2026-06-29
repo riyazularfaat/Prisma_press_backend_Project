@@ -31,9 +31,6 @@ const getAllPosts = catchAsync(async (req: Request, res: Response, next: NextFun
     });
 })
 
-const postStats = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {},
-);
 const getMyPosts = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const authorId = req.user?.id;
@@ -89,6 +86,8 @@ const updatePost = catchAsync(
     });
   },
 );
+
+
 const deletePost = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params.postId;
@@ -112,7 +111,17 @@ const deletePost = catchAsync(
   },
 );
 
-
+const postStats = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await postService.postStats();
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Post stats retrived successfully.",
+      data: result
+    });
+  },
+);
 
 export const postController = {
   getAllPosts,
