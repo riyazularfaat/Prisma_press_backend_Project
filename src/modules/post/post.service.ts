@@ -178,47 +178,7 @@ const deletePost = async (
 
 const postStats = async () => {
   const transactionResult = await prisma.$transaction(async (tx) => {
-    // const totalPosts = await tx.post.count();
 
-    // const totalPublishedPosts = await tx.post.count({
-    //   where: {
-    //     status: PostStatus.PUBLISHED
-    //   }
-    // });
-
-    // const totalDraftPosts = await tx.post.count({
-    //   where: {
-    //     status: PostStatus.DRAFT
-    //   }
-    // });
-
-    // const totalArchivedPosts = await tx.post.count({
-    //   where: {
-    //     status: PostStatus.ARCHIVED
-    //   }
-    // });
-
-    // const totalComments = await tx.comment.count();
-
-    // const totalApprovedComments = await tx.comment.count({
-    //   where: {
-    //     status: CommentStatus.APPROVED
-    //   }
-    // });
-
-    // const totalRejectedComments = await tx.comment.count({
-    //   where: {
-    //     status: CommentStatus.REJECT
-    //   }
-    // });
-
-    // const totalViewsAggregate = await tx.post.aggregate({
-    //   _sum: {
-    //     views: true
-    //   }
-    // });
-
-    // const totalViews = totalViewsAggregate._sum.views
     const [
       totalPosts,
       totalPublishedPosts,
